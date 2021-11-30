@@ -1,2 +1,2 @@
-# podrida
+# Podrida
 Page: https://podrida.vercel.app/
