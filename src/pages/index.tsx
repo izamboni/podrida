@@ -22,7 +22,8 @@ interface Values {
 const IndexPage: NextPage = () => {
   const router = useRouter();
   const onSubmit = (values: Values) => {
-    console.log(values);
+    localStorage.setItem('nroPlayers', values.nroPlayers.toString());
+    localStorage.setItem('players', values.players);
     router.push('/game');
   };
 

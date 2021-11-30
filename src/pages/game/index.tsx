@@ -11,6 +11,7 @@ interface Actual {
   player: string;
   value: number;
 }
+
 // interface Total {
 //   player: string;
 //   value: number;
@@ -19,13 +20,32 @@ interface Actual {
 const Game: FC = () => {
   const [expected, setExpected] = useState<Expected[]>([]);
   const [actual, setActual] = useState<Actual[]>([]);
-  const players = ['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5', 'Player 6'];
-  // const defaultTotal: Total[] = players.map((player) => ({ player, value: 0 }));
-  // const [total, setTotal] = useState<Total[]>(defaultTotal);
+
+  const players = localStorage.getItem('players')?.split(',') || [];
+  // const defaultTotals: Total[] = players.map((player) => ({ player, value: 0 }));
+  // const [total, setTotal] = useState<Total[]>(defaultTotals);
+
   const maxCards = Math.floor(52 / players.length);
   const totalHands = 2 * maxCards + players.length;
 
+  // const calculateTotal = (aux: Expected | Actual, called: string) => {
+  //   if (called === 'expected') {
+  //     const currentActual = actual.filter((e) => e.id === aux.id && e.player === aux.player)[0];
+  //     if (currentActual) {
+
+  //     }
+  //   }
+  //   console.log(total.filter((t) => t.player === aux.player)[0]);
+  // };
+
   const handleExpected = (player: string, id: number, value: number) => {
+    if (Number.isNaN(value)) {
+      const expectedToRemove = expected.filter((e) => e.id === id && e.player === player)[0];
+      if (expectedToRemove) {
+        setExpected(expected.filter((e) => e.id === id && e.player !== player));
+      }
+      return;
+    }
     const newExpected = expected.filter((e) => e.id === id && e.player === player)[0];
     if (!newExpected) {
       setExpected([...expected, { id, player, value }]);
@@ -33,6 +53,7 @@ const Game: FC = () => {
     if (newExpected) {
       setExpected(expected.map((e) => (e.id === id && e.player === player ? { ...e, value } : e)));
     }
+    // calculateTotal(newExpected, 'expected');
   };
 
   const handleActual = (player: string, id: number, value: number) => {
@@ -43,6 +64,16 @@ const Game: FC = () => {
     if (newActual) {
       setActual(actual.map((e) => (e.id === id && e.player === player ? { ...e, value } : e)));
     }
+    // calculateTotal(newActual, 'actual');
+  };
+
+  const calcualteExpected = (cards: number, hand: number) => {
+    const expects = expected.filter((e) => e.id === hand);
+    if (expects.length === 0) return '-';
+    const expectedValue = expects.reduce((acc, curr) => acc + curr.value, 0);
+    const toReturn =
+      expectedValue - cards > 0 ? `+${expectedValue - cards}` : expectedValue - cards;
+    return toReturn;
   };
 
   const calculateTotal = (player: string) => {
@@ -79,6 +110,7 @@ const Game: FC = () => {
             {players.map((player) => (
               <Th key={player}>{player}</Th>
             ))}
+            <Th>Pedidas</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -102,17 +134,18 @@ const Game: FC = () => {
                       type="number"
                       placeholder="Pedidas"
                       onChange={(e) => handleExpected(player, i, parseInt(e.target.value, 10))}
-                      w="50%"
+                      w="75%"
                     />
                     <Input
                       type="number"
                       placeholder="Hechas"
-                      w="50%"
+                      w="75%"
                       onChange={(e) => handleActual(player, i, parseInt(e.target.value, 10))}
                     />
                   </Stack>
                 </Td>
               ))}
+              <Td>{calcualteExpected(value + 1, i)}</Td>
             </Tr>
           ))}
           <Tr>
@@ -120,8 +153,8 @@ const Game: FC = () => {
             {players.map((player) => (
               <Td key={player}>
                 <Stack spacing="4">
-                  <Input type="number" placeholder="Pedidas" w="50%" />
-                  <Input type="number" placeholder="Hechas" w="50%" />
+                  <Input type="number" placeholder="Pedidas" w="75%" />
+                  <Input type="number" placeholder="Hechas" w="75%" />
                 </Stack>
               </Td>
             ))}
@@ -133,6 +166,9 @@ const Game: FC = () => {
             {players.map((player) => (
               <Td key={player}>{calculateTotal(player)}</Td>
             ))}
+            {/* {players.map((player) => (
+              <Td key={player}>{total.filter((e) => e.player === player)[0].value}</Td>
+            ))} */}
           </Tr>
         </Tfoot>
       </Table>
@@ -148,21 +184,21 @@ export default Game;
 //     {players.map((player) => (
 //       <Td key={player}>
 //         <Stack spacing="4">
-//           <Input type="number" placeholder="Pedidas" w="50%" />
-//           <Input type="number" placeholder="Hechas" w="50%" />
+//           <Input type="number" placeholder="Pedidas" w="75%" />
+//           <Input type="number" placeholder="Hechas" w="75%" />
 //         </Stack>
 //       </Td>
 //     ))}
 //   </Tr>
 // ))}
 // {players.map((player) => (
-//   <Tr key={player} bg="teal.500">
+//   <Tr key={player} bg="teal.750">
 //     <Td>{maxCards}</Td>
 //     {players.map((playerr) => (
 //       <Td key={playerr}>
 //         <Stack>
-//           <Input type="number" placeholder="Pedidas" w="50%" />
-//           <Input type="number" placeholder="Hechas" w="50%" />
+//           <Input type="number" placeholder="Pedidas" w="75%" />
+//           <Input type="number" placeholder="Hechas" w="75%" />
 //         </Stack>
 //       </Td>
 //     ))}
@@ -177,8 +213,8 @@ export default Game;
 //       {players.map((player) => (
 //         <Td key={player}>
 //           <Stack>
-//             <Input type="number" placeholder="Pedidas" w="50%" />
-//             <Input type="number" placeholder="Hechas" w="50%" />
+//             <Input type="number" placeholder="Pedidas" w="75%" />
+//             <Input type="number" placeholder="Hechas" w="75%" />
 //           </Stack>
 //         </Td>
 //       ))}
@@ -189,8 +225,8 @@ export default Game;
 //   {players.map((player) => (
 //     <Td key={player}>
 //       <Stack>
-//         <Input type="number" placeholder="Pedidas" w="50%" />
-//         <Input type="number" placeholder="Hechas" w="50%" />
+//         <Input type="number" placeholder="Pedidas" w="75%" />
+//         <Input type="number" placeholder="Hechas" w="75%" />
 //       </Stack>
 //     </Td>
 //   ))}
