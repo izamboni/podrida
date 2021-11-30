@@ -12,31 +12,14 @@ interface Actual {
   value: number;
 }
 
-// interface Total {
-//   player: string;
-//   value: number;
-// }
-
 const Game: FC = () => {
   const [expected, setExpected] = useState<Expected[]>([]);
   const [actual, setActual] = useState<Actual[]>([]);
 
   const players = localStorage.getItem('players')?.split(',') || [];
-  // const defaultTotals: Total[] = players.map((player) => ({ player, value: 0 }));
-  // const [total, setTotal] = useState<Total[]>(defaultTotals);
 
   const maxCards = Math.floor(52 / players.length);
   const totalHands = 2 * maxCards + players.length;
-
-  // const calculateTotal = (aux: Expected | Actual, called: string) => {
-  //   if (called === 'expected') {
-  //     const currentActual = actual.filter((e) => e.id === aux.id && e.player === aux.player)[0];
-  //     if (currentActual) {
-
-  //     }
-  //   }
-  //   console.log(total.filter((t) => t.player === aux.player)[0]);
-  // };
 
   const handleExpected = (player: string, id: number, value: number) => {
     if (Number.isNaN(value)) {
@@ -101,10 +84,10 @@ const Game: FC = () => {
       justify="center"
       w="100%"
       p="0 5rem 0 5rem"
-      bg="gray.300"
+      bg="gray.900"
     >
-      <Table colorScheme="blue" bg="gray.100">
-        <Thead position="sticky" top="0" bg="white" zIndex="5">
+      <Table colorScheme="blue" bg="gray.700">
+        <Thead position="sticky" top="0" bg="black" zIndex="5">
           <Tr>
             <Th />
             {players.map((player) => (
@@ -160,7 +143,7 @@ const Game: FC = () => {
             ))}
           </Tr>
         </Tbody>
-        <Tfoot position="sticky" bottom="0" bg="white" zIndex="5">
+        <Tfoot position="sticky" bottom="0" bg="black" zIndex="5">
           <Tr>
             <Td>Total</Td>
             {players.map((player) => (
