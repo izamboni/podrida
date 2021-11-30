@@ -1,0 +1,57 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest": true,
+    "node": true
+  },
+  "extends": ["airbnb-typescript-prettier", "plugin:jsx-a11y/recommended"],
+  "overrides": [
+    {
+      "files": ["**/utils.ts", "**/constants.ts", "./src/i18n/configs.ts", "./src/utils/*"],
+      "rules": {
+        "import/prefer-default-export": "off"
+      }
+    },
+    {
+      "files": ["./src/pages/_app.tsx", "./src/pages/_document.tsx"],
+      "rules": {
+        "react/jsx-props-no-spreading": "off"
+      }
+    },
+    {
+      "files": ["./src/typing/*"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    },
+
+    {
+      "files": ["./src/context/*"],
+      "rules": {
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    }
+  ],
+  "rules": {
+    "no-plusplus": "off",
+    "react/react-in-jsx-scope": "off",
+    "import/no-unresolved": "off",
+    "react/require-default-props": "off",
+    "react/jsx-props-no-spreading": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".ts", ".tsx"],
+        "paths": ["."]
+      }
+    },
+    "react": {
+      "version": "detect"
+    }
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["jsx-a11y"]
+}
