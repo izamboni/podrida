@@ -1,16 +1,6 @@
 import { FC, useState } from 'react';
-import { Table, Thead, Tbody, Tfoot, Tr, Th, Td, Input, Stack, Flex } from '@chakra-ui/react';
-
-interface Expected {
-  id: number;
-  player: string;
-  value: number;
-}
-interface Actual {
-  id: number;
-  player: string;
-  value: number;
-}
+import { Flex } from '@chakra-ui/react';
+import GameTable from 'components/game-table';
 
 const Game: FC = () => {
   const [expected, setExpected] = useState<Expected[]>([]);
@@ -27,7 +17,6 @@ const Game: FC = () => {
   };
   const maxCards = setMaxCardas();
 
-  // const maxCards = Math.floor(52 / players.length);
   const totalHands = 2 * maxCards + players.length;
 
   const handleExpected = (player: string, id: number, value: number) => {
@@ -49,7 +38,6 @@ const Game: FC = () => {
     if (newExpected) {
       setExpected(expected.map((e) => (e.id === id && e.player === player ? { ...e, value } : e)));
     }
-    // calculateTotal(newExpected, 'expected');
   };
 
   const handleActual = (player: string, id: number, value: number) => {
@@ -60,7 +48,6 @@ const Game: FC = () => {
     if (newActual) {
       setActual(actual.map((e) => (e.id === id && e.player === player ? { ...e, value } : e)));
     }
-    // calculateTotal(newActual, 'actual');
   };
 
   const calcualteExpected = (cards: number, hand: number) => {
@@ -99,72 +86,15 @@ const Game: FC = () => {
       p="0 5rem 0 5rem"
       bg="gray.900"
     >
-      <Table colorScheme="blue" bg="gray.700">
-        <Thead position="sticky" top="0" bg="black" zIndex="5">
-          <Tr>
-            <Th />
-            {players.map((player) => (
-              <Th key={player}>{player}</Th>
-            ))}
-            <Th>Pedidas</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {Array.from(Array(totalHands).keys()).map((value, i) => (
-            <Tr key={value}>
-              {value < maxCards && <Td>{Array.from(Array(maxCards).keys())[i] + 1}</Td>}
-              {value >= maxCards && value < maxCards + players.length && (
-                <Td bg="teal.500"> {maxCards}</Td>
-              )}
-              {value >= maxCards + players.length && (
-                <Td>
-                  {Array.from(Array(maxCards).keys()).slice(0).reverse()[
-                    i - maxCards - players.length
-                  ] + 1}
-                </Td>
-              )}
-              {players.map((player) => (
-                <Td key={player}>
-                  <Stack spacing="4">
-                    <Input
-                      type="number"
-                      placeholder="Pedidas"
-                      onChange={(e) => handleExpected(player, i, parseInt(e.target.value, 10))}
-                      w="75%"
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Hechas"
-                      w="75%"
-                      onChange={(e) => handleActual(player, i, parseInt(e.target.value, 10))}
-                    />
-                  </Stack>
-                </Td>
-              ))}
-              <Td>{calcualteExpected(value + 1, i)}</Td>
-            </Tr>
-          ))}
-          <Tr>
-            <Td>Indio</Td>
-            {players.map((player) => (
-              <Td key={player}>
-                <Stack spacing="4">
-                  <Input type="number" placeholder="Pedidas" w="75%" />
-                  <Input type="number" placeholder="Hechas" w="75%" />
-                </Stack>
-              </Td>
-            ))}
-          </Tr>
-        </Tbody>
-        <Tfoot position="sticky" bottom="0" bg="black" zIndex="5">
-          <Tr>
-            <Td>Total</Td>
-            {players.map((player) => (
-              <Td key={player}>{calculateTotal(player)}</Td>
-            ))}
-          </Tr>
-        </Tfoot>
-      </Table>
+      <GameTable
+        players={players}
+        maxCards={maxCards}
+        totalHands={totalHands}
+        handleExpected={handleExpected}
+        handleActual={handleActual}
+        calcualteExpected={calcualteExpected}
+        calculateTotal={calculateTotal}
+      />
     </Flex>
   );
 };
