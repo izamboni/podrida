@@ -34,7 +34,11 @@ const Game: FC = () => {
     if (Number.isNaN(value)) {
       const expectedToRemove = expected.filter((e) => e.id === id && e.player === player)[0];
       if (expectedToRemove) {
-        setExpected(expected.filter((e) => e.id === id && e.player !== player));
+        setExpected(
+          expected.filter(
+            (e) => !(e.id === expectedToRemove.id && e.player === expectedToRemove.player),
+          ),
+        );
       }
       return;
     }
@@ -158,9 +162,6 @@ const Game: FC = () => {
             {players.map((player) => (
               <Td key={player}>{calculateTotal(player)}</Td>
             ))}
-            {/* {players.map((player) => (
-              <Td key={player}>{total.filter((e) => e.player === player)[0].value}</Td>
-            ))} */}
           </Tr>
         </Tfoot>
       </Table>
@@ -169,57 +170,3 @@ const Game: FC = () => {
 };
 
 export default Game;
-
-// {Array.from(Array(maxCards).keys()).map((hand) => (
-//   <Tr key={hand}>
-//     <Td>{hand + 1}</Td>
-//     {players.map((player) => (
-//       <Td key={player}>
-//         <Stack spacing="4">
-//           <Input type="number" placeholder="Pedidas" w="75%" />
-//           <Input type="number" placeholder="Hechas" w="75%" />
-//         </Stack>
-//       </Td>
-//     ))}
-//   </Tr>
-// ))}
-// {players.map((player) => (
-//   <Tr key={player} bg="teal.750">
-//     <Td>{maxCards}</Td>
-//     {players.map((playerr) => (
-//       <Td key={playerr}>
-//         <Stack>
-//           <Input type="number" placeholder="Pedidas" w="75%" />
-//           <Input type="number" placeholder="Hechas" w="75%" />
-//         </Stack>
-//       </Td>
-//     ))}
-//   </Tr>
-// ))}
-// {Array.from(Array(maxCards).keys())
-//   .slice(0)
-//   .reverse()
-//   .map((hand) => (
-//     <Tr key={hand}>
-//       <Td>{hand + 1}</Td>
-//       {players.map((player) => (
-//         <Td key={player}>
-//           <Stack>
-//             <Input type="number" placeholder="Pedidas" w="75%" />
-//             <Input type="number" placeholder="Hechas" w="75%" />
-//           </Stack>
-//         </Td>
-//       ))}
-//     </Tr>
-//   ))}
-// <Tr>
-//   <Td>Indio</Td>
-//   {players.map((player) => (
-//     <Td key={player}>
-//       <Stack>
-//         <Input type="number" placeholder="Pedidas" w="75%" />
-//         <Input type="number" placeholder="Hechas" w="75%" />
-//       </Stack>
-//     </Td>
-//   ))}
-// </Tr>
