@@ -18,7 +18,16 @@ const Game: FC = () => {
 
   const players = localStorage.getItem('players')?.split(',') || [];
 
-  const maxCards = Math.floor(52 / players.length);
+  const setMaxCardas = (): number => {
+    const maxCards = localStorage.getItem('maxCards');
+    if (maxCards === null) {
+      return Math.floor(52 / players.length);
+    }
+    return parseInt(maxCards, 10);
+  };
+  const maxCards = setMaxCardas();
+
+  // const maxCards = Math.floor(52 / players.length);
   const totalHands = 2 * maxCards + players.length;
 
   const handleExpected = (player: string, id: number, value: number) => {

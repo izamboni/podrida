@@ -13,6 +13,7 @@ import {
   Input,
   Button,
   ButtonGroup,
+  Checkbox,
   Text,
 } from '@chakra-ui/react';
 import { Form, Field } from 'react-final-form';
@@ -20,6 +21,8 @@ import { Form, Field } from 'react-final-form';
 interface Values {
   nroPlayers: string;
   players: string;
+  isLimitedCards: boolean;
+  maxCards: string;
 }
 
 interface IFormErrorMessage {
@@ -46,9 +49,15 @@ const ErrorMessage: FunctionComponent<IFormErrorMessage> = ({ fieldName }) => {
 
 const IndexPage: NextPage = () => {
   const router = useRouter();
+  const defaultPlayers = localStorage.getItem('players');
+  const initValues =
+    defaultPlayers !== undefined
+      ? { nroPlayers: 6, maxCards: Math.floor(52 / 6), players: defaultPlayers }
+      : { nroPlayers: 6, maxCards: Math.floor(52 / 6) };
+
   const onSubmit = (values: Values) => {
     if (values.players === undefined) return { players: 'required' };
-    const { nroPlayers, players } = values;
+    const { nroPlayers, players, isLimitedCards, maxCards } = values;
     if (parseInt(nroPlayers, 10) !== players?.split(',').length) {
       const diff = parseInt(nroPlayers, 10) - players?.split(',').length;
       const errorMerssage =
@@ -57,19 +66,25 @@ const IndexPage: NextPage = () => {
         error: errorMerssage,
       };
     }
+    // console.log(values);
     localStorage.setItem('nroPlayers', nroPlayers);
     localStorage.setItem('players', players);
+
+    const error = isLimitedCards
+      ? localStorage.setItem('maxCards', maxCards)
+      : localStorage.setItem('maxCards', Math.floor(52 / parseInt(nroPlayers, 10)).toString());
+
     router.push('/game');
-    return {};
+    return error;
   };
 
   return (
     <Flex justify="center" w="100%" p="2rem 0 0 0 ">
       <Form
         onSubmit={onSubmit}
-        initialValues={{ nroPlayers: 6 }}
+        initialValues={initValues}
         // validate={validations}
-        render={({ handleSubmit }) => (
+        render={({ handleSubmit, values }) => (
           <Flex as="form" autoComplete="off" onSubmit={handleSubmit} direction="column" w="50%">
             <Field name="nroPlayers">
               {({ input }) => (
@@ -85,6 +100,35 @@ const IndexPage: NextPage = () => {
                 </FormControl>
               )}
             </Field>
+            <Flex marginTop="1rem">
+              <Field name="isLimitedCards" type="checkbox">
+                {({ input }) => (
+                  <FormControl>
+                    <FormLabel>Limitar cartas</FormLabel>
+                    <Checkbox {...input} size="lg" />
+                  </FormControl>
+                )}
+              </Field>
+              <Field name="maxCards">
+                {({ input }) => (
+                  <FormControl>
+                    <FormLabel>Maximo de cartas</FormLabel>
+                    <NumberInput
+                      {...input}
+                      min={5}
+                      max={Math.floor(52 / parseInt(values.nroPlayers, 10))}
+                      isDisabled={!values.isLimitedCards}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </FormControl>
+                )}
+              </Field>
+            </Flex>
             <Field name="players">
               {({ input }) => (
                 <FormControl marginTop="1rem">
