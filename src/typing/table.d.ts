@@ -8,3 +8,13 @@ interface Actual {
   player: string;
   value: number;
 }
+
+interface Total {
+  player: string;
+  total: number;
+}
+
+interface ExpectedTotals {
+  id: number;
+  value: string;
+}

@@ -1,5 +1,4 @@
 import { FunctionComponent } from 'react';
-import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import {
   Flex,
@@ -17,17 +16,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Form, Field } from 'react-final-form';
-
-interface Values {
-  nroPlayers: string;
-  players: string;
-  isLimitedCards: boolean;
-  maxCards: string;
-}
-
-interface IFormErrorMessage {
-  fieldName: string;
-}
+import useForm from 'hooks/useForm';
 
 const ErrorMessage: FunctionComponent<IFormErrorMessage> = ({ fieldName }) => {
   return (
@@ -48,36 +37,7 @@ const ErrorMessage: FunctionComponent<IFormErrorMessage> = ({ fieldName }) => {
 // export default ErrorMessage;
 
 const IndexPage: NextPage = () => {
-  const router = useRouter();
-  const defaultPlayers = localStorage.getItem('players');
-  const initValues =
-    defaultPlayers !== undefined
-      ? { nroPlayers: 6, maxCards: Math.floor(52 / 6), players: defaultPlayers }
-      : { nroPlayers: 6, maxCards: Math.floor(52 / 6) };
-
-  const onSubmit = (values: Values) => {
-    if (values.players === undefined) return { players: 'required' };
-    const { nroPlayers, players, isLimitedCards, maxCards } = values;
-    if (parseInt(nroPlayers, 10) !== players?.split(',').length) {
-      const diff = parseInt(nroPlayers, 10) - players?.split(',').length;
-      const errorMerssage =
-        diff > 0 ? `Te faltan ${diff} jugadores` : `Te sobran ${Math.abs(diff)} jugadores`;
-      return {
-        error: errorMerssage,
-      };
-    }
-    // console.log(values);
-    localStorage.setItem('nroPlayers', nroPlayers);
-    localStorage.setItem('players', players);
-
-    const error = isLimitedCards
-      ? localStorage.setItem('maxCards', maxCards)
-      : localStorage.setItem('maxCards', Math.floor(52 / parseInt(nroPlayers, 10)).toString());
-
-    router.push('/game');
-    return error;
-  };
-
+  const { initValues, onSubmit } = useForm();
   return (
     <Flex justify="center" w="100%" p="2rem 0 0 0 ">
       <Form
